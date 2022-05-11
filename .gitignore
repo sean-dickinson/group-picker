@@ -1,2 +1,3 @@
-lib/previous_groups/*
+previous_groups/*
+full_list.txt
 .idea/*

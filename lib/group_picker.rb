@@ -1,16 +1,25 @@
 require "yaml"
 
+MIN_GROUP_SIZE = 5
 
+# Loads the previous groups into memory
+# @return [Array<Array<String>>] The previous groups
 def get_previous_groups
   previous_groups = []
-  if Dir.exists?("./previous_groups")
-    Dir.glob("./previous_groups/*.yml").each do |file|
+  if Dir.exists?("../previous_groups")
+    Dir.glob("../previous_groups/*.yml").each do |file|
       previous_groups << YAML.load_file(file)
     end
   end
   previous_groups
 end
 
+
+# Gets the new groups to use
+# Will create groups with minimum size of  MIN_GROUP_SIZE
+def get_new_groups
+  # TODO
+end
 
 # Divides the list into groups >= n
 # @param [Array<String>] list - the full list to divide into groups
