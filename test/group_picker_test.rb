@@ -6,12 +6,18 @@ describe "Group Picker Functionality" do
 
   describe "#get_previous_groups" do
     it "Should return an empty array if no folder exists or if it is empty" do
-      Dir.stub :exists?, false do
+      Dir.stub :exist?, false do
         assert_equal [], get_previous_groups
         Dir.stub :glob, [] do
           assert_equal [], get_previous_groups
         end
       end
+    end
+  end
+
+  describe "#get_full_list" do
+    it "Should read the file and return an array of strings" do
+      assert_equal ["A", "B", "C"], get_full_list("test/full_list_test.txt")
     end
   end
 
@@ -34,9 +40,9 @@ describe "Group Picker Functionality" do
   describe "#rate_group" do
     it "returns the correct rating of the group" do
       previous_groups = [[1,2,3,4], [5,6,7,8]]
-      assert_equal 2, rate_group([1,5,3,7], previous_groups)
-      assert_equal 9, rate_group([1,2,3,4,5], previous_groups)
-      assert_equal 0, rate_group([9,10,11,12], previous_groups)
+      assert_equal 2, rate_group([1,5,3,7], previous_groups)[:rating]
+      assert_equal 9, rate_group([1,2,3,4,5], previous_groups)[:rating]
+      assert_equal 0, rate_group([9,10,11,12], previous_groups)[:rating]
     end
   end
 end
