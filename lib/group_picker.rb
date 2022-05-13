@@ -1,6 +1,6 @@
 require "yaml"
 
-MIN_GROUP_SIZE = 5
+MIN_GROUP_SIZE = 4
 PREVIOUS_GROUP_DIR_PATH = "previous_groups"
 
 # Loads the previous groups into memory
