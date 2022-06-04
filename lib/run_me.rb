@@ -1,3 +1,3 @@
-require_relative "group_picker"
+require_relative "group_picker_ui"
 
-ui
+GroupPickerUI.new.main

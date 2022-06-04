@@ -2,48 +2,64 @@ require "minitest/autorun"
 require "./lib/group_picker"
 
 
-describe "Group Picker Functionality" do
+describe "Group Picker" do
 
-  describe "#get_previous_groups" do
-    it "Should return an empty array if no folder exists or if it is empty" do
-      Dir.stub :exist?, false do
-        assert_equal [], get_previous_groups
-        Dir.stub :glob, [] do
-          assert_equal [], get_previous_groups
-        end
-      end
-    end
-  end
+  describe "#get_new_groups" do
 
-  describe "#get_full_list" do
-    it "Should read the file and return an array of strings" do
-      assert_equal ["A", "B", "C"], get_full_list("test/full_list_test.txt")
-    end
-  end
-
-  describe "#groups_of_at_least_n" do
     it "returns evenly distributed groups if the list is divisible by n" do
-      list = (1..10).to_a
-      groups = groups_of_at_least_n(list, 2)
+      picker = GroupPicker.new(list: (1..10).to_a, previous_groups: [], min_group_size: 2)
+      groups, _stats = picker.get_new_groups(num_runs: 1)
       assert_equal(5, groups.size)
       assert groups.all? { |group| group.size == 2 }
     end
 
     it "creates groups larger than n if the list is not divisible by n" do
-      list = (1..10).to_a
-      groups = groups_of_at_least_n(list, 4)
+      picker = GroupPicker.new(list: (1..10).to_a, previous_groups: [], min_group_size: 4)
+      groups, _stats = picker.get_new_groups(num_runs: 1)
       assert_equal(2, groups.size)
       assert groups.all? { |group| group.size == 5 }
     end
+
+    it "creates groupings that have no overlap between previous groups when possible" do
+      list = (1..4).to_a
+      previous_groups = [
+        [1,2],
+        [3,4],
+      ]
+      picker = GroupPicker.new(list:, previous_groups:, min_group_size: 2)
+      groups, stats = picker.get_new_groups
+
+      expected_stats = { total_rating: 0,
+                         total_overlaps: 0,
+                         highest_overlap: 0
+                        }
+      assert_equal expected_stats, stats
+
+      expected_groups = list.permutation(2).to_a - previous_groups.map {|l| l.permutation(2).to_a}.flatten
+
+      assert expected_groups.include?(groups[0])
+      assert expected_groups.include?(groups[1])
+
+    end
+
+    it "creates groupings that have the minimal overlap between previous groups" do
+      list = (1..6).to_a
+      previous_groups = [
+        [1,2,3],
+        [4,5,6],
+      ]
+      picker = GroupPicker.new(list:, previous_groups:, min_group_size: 3)
+      groups, stats = picker.get_new_groups
+
+      expected_stats = { total_rating: 2,
+                         total_overlaps: 2,
+                         highest_overlap: 1
+                       }
+
+      assert_equal expected_stats, stats
+    end
+
   end
 
-  describe "#rate_group" do
-    it "returns the correct rating of the group" do
-      previous_groups = [[1,2,3,4], [5,6,7,8]]
-      assert_equal 2, rate_group([1,5,3,7], previous_groups)[:rating]
-      assert_equal 9, rate_group([1,2,3,4,5], previous_groups)[:rating]
-      assert_equal 0, rate_group([9,10,11,12], previous_groups)[:rating]
-    end
-  end
 end
 
