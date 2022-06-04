@@ -1,6 +1,10 @@
 require "yaml"
 
 class GroupPicker
+  # @param [Array<String, Number>] list - the flat list of entities to make groups out of. Each entry must be unique
+  # @param [Array<Array<String, Number>>] previous_groups - The list of previous groupings. This should be a 2 dimensional list, where the inner lists are the previous groupings
+  # @param[Number] min_group_size - the minimum size of each generated group.
+  # If the full list is not evenly divisible, some groups will pick up the extra members but this minimum size is guaranteed
   def initialize(list:, previous_groups:, min_group_size:)
     @list = list
     @previous_groups = previous_groups
@@ -30,6 +34,7 @@ class GroupPicker
   end
 
   private
+
   # Divides the list into groups >= n
   # @param [Array<String>] list - the full list to divide into groups
   # @param [Integer] n - the minimum size of each group
